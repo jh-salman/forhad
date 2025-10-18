@@ -98,7 +98,7 @@ export default function Home() {
         <div className="mt-4 text-sm text-gray-600">
           Showing {filteredProducts.length} of {productsData.length} products
           {searchQuery && (
-            <span> for "{searchQuery}"</span>
+            <span> for &quot;{searchQuery}&quot;</span>
           )}
           {selectedCategory !== 'all' && (
             <span> in {selectedCategory}</span>
