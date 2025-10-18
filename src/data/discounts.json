@@ -1,0 +1,20 @@
+{
+  "eligibleSkus": ["ULT44", "UWM10", "SX21"],
+  "global": { "percent": 0 }, 
+  "overrides": [
+    {
+      "sku": "SPECIAL_A_SAMPLE",
+      "targetPrice": 1040,
+      "note": "Example for 1150→1040"
+    },
+    {
+      "sku": "SPECIAL_B_SAMPLE",
+      "targetPrice": 1650,
+      "note": "Example for 1800→1650"
+    }
+  ],
+  "coupons": [
+    { "code": "ELEC5", "percent": 5 }
+  ]
+}
+

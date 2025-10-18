@@ -1,0 +1,89 @@
+[
+  {
+    "id": "p1",
+    "sku": "ULT44",
+    "name": "Ulanzi T-44 Tripod",
+    "price": 1650,
+    "image": "/images/img1.1.jpeg",
+    "images": [
+      "/images/img1.1.jpeg",
+      "/images/img1.2.jpeg"
+    ],
+    "category": "Tripod",
+    "stock": 20,
+    "description": "Portable T-44 travel tripod with adjustable height and compact design."
+  },
+  {
+    "id": "p2",
+    "sku": "ULA100",
+    "name": "Ulanzi A100",
+    "price": 3090,
+    "image": "/images/img2.1.jpeg",
+    "images": [
+      "/images/img2.1.jpeg",
+      "/images/img-2.2.jpeg"
+    ],
+    "category": "Accessories",
+    "stock": 15,
+    "description": "Ulanzi A100 versatile accessory with multiple mounting options."
+  },
+  {
+    "id": "p3",
+    "sku": "UWM10",
+    "name": "ULANZI WM-10 Microphone",
+    "price": 1550,
+    "image": "/images/img3.1.jpeg",
+    "images": [
+      "/images/img3.1.jpeg",
+      "/images/img3.2.jpeg"
+    ],
+    "category": "Microphone",
+    "stock": 25,
+    "description": "Compact wireless mic WM-10 with excellent sound quality and long battery life."
+  },
+  {
+    "id": "p4",
+    "sku": "SX21",
+    "name": "Sx21 Wireless Microphone",
+    "price": 1399,
+    "image": "/images/img4.1.jpeg",
+    "images": [
+      "/images/img4.1.jpeg",
+      "/images/img4.2.jpeg",
+      "/images/img4.3.jpeg"
+    ],
+    "category": "Microphone",
+    "stock": 30,
+    "description": "Sx21 dual-channel wireless mic with noise cancellation and clear audio transmission."
+  },
+  {
+    "id": "p5",
+    "sku": "F112",
+    "name": "F11-2 Wireless Microphone",
+    "price": 1349,
+    "image": "/images/img5.1.jpeg",
+    "images": [
+      "/images/img5.1.jpeg",
+      "/images/img5.2.jpeg",
+      "/images/img5.3.jpeg"
+    ],
+    "category": "Microphone",
+    "stock": 18,
+    "description": "F11-2 budget wireless microphone with professional sound quality and easy setup."
+  },
+  {
+    "id": "p6",
+    "sku": "HEQ2",
+    "name": "Hoco EQ2 Wireless BT Headset",
+    "price": 1049,
+    "image": "/images/img6.1.jpeg",
+    "images": [
+      "/images/img6.1.jpeg",
+      "/images/img6.2.jpeg",
+      "/images/img6.3.jpeg"
+    ],
+    "category": "Headset",
+    "stock": 40,
+    "description": "Hoco EQ2 Bluetooth headset with premium sound quality and comfortable design."
+  }
+]
