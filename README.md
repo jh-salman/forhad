@@ -1,36 +1,151 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Electro Mart - E-commerce Starter
+
+A production-ready Next.js e-commerce starter built with modern technologies and best practices.
+
+## Features
+
+- **Next.js 14+** with App Router
+- **Tailwind CSS** for styling
+- **shadcn/ui** components (Button, Card, Badge, Input, Sheet, Tabs)
+- **Zustand** for state management
+- **BDT Currency** support (৳)
+- **SEO optimized** with proper metadata and OG tags
+- **Mobile-first responsive** design
+- **Accessibility** features (semantic HTML, alt text, focus states)
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── (store)/
+│   │   ├── page.js              # Home page
+│   │   ├── cart/page.js         # Shopping cart
+│   │   ├── checkout/page.js     # Checkout process
+│   │   └── products/[slug]/     # Product details
+│   ├── admin/page.js            # Admin panel
+│   ├── layout.js                # Root layout
+│   └── globals.css              # Global styles
+├── components/
+│   ├── ui/                      # shadcn/ui components
+│   ├── Header.jsx               # Site header
+│   ├── Footer.jsx               # Site footer
+│   ├── ProductCard.jsx          # Product display card
+│   ├── PriceTag.jsx             # Price display component
+│   ├── QuantityPicker.jsx       # Quantity selector
+│   └── CartDrawer.jsx           # Mobile cart drawer
+├── lib/
+│   ├── money.js                 # Currency formatting
+│   ├── slugify.js               # URL slug generation
+│   ├── search.js                # Product search/filter
+│   └── discountEngine.js        # Discount calculation
+├── store/
+│   └── cartStore.js             # Zustand cart store
+└── data/
+    ├── products.json            # Product catalog
+    └── discounts.json           # Discount rules
+```
 
 ## Getting Started
 
-First, run the development server:
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+2. **Set up environment variables:**
+   Create a `.env.local` file:
+   ```
+   NEXT_PUBLIC_ADMIN_PASS=admin123
+   ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+4. **Open your browser:**
+   Navigate to [http://localhost:3000](http://localhost:3000)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Features Overview
 
-## Learn More
+### Store Pages
 
-To learn more about Next.js, take a look at the following resources:
+- **Home Page (`/`)**: Hero section, product grid, search, and category filters
+- **Product Details (`/products/[slug]`)**: Product information, pricing, quantity selector, add to cart
+- **Cart (`/cart`)**: View cart items, update quantities, apply coupons, view totals
+- **Checkout (`/checkout`)**: Customer information form, order summary, demo order placement
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Admin Panel (`/admin`)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Password Protection**: Access controlled by `NEXT_PUBLIC_ADMIN_PASS` environment variable
+- **Products Management**: Edit product catalog via JSON interface
+- **Discounts Management**: Configure discount rules, eligible SKUs, and coupon codes
+- **Real-time Preview**: See changes immediately without page reload
 
-## Deploy on Vercel
+### Discount Engine
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The discount system supports:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Eligible SKUs**: Mark specific products for global discounts
+- **Global Discounts**: Percentage or fixed amount discounts
+- **Price Overrides**: Set specific target prices for individual products
+- **Coupon Codes**: Additional percentage discounts (e.g., "ELEC5" for 5% off)
+
+### Cart Features
+
+- **Persistent Storage**: Cart state saved in localStorage
+- **Real-time Updates**: Instant price calculations with discounts
+- **Mobile-friendly**: Sheet drawer for mobile cart access
+- **Quantity Management**: Easy quantity adjustment with validation
+
+## Sample Data
+
+The project includes 6 sample products:
+
+1. **Ulanzi T-44 Tripod** (৳1,650) - Tripod category
+2. **Ulanzi A100** (৳3,090) - Accessories category  
+3. **ULANZI WM-10 Microphone** (৳1,550) - Microphone category
+4. **Sx21 Wireless Microphone** (৳1,399) - Microphone category
+5. **F11-2 Wireless Microphone** (৳1,349) - Microphone category
+6. **Hoco EQ2 Wireless BT Headset** (৳1,049) - Headset category
+
+## Discount Examples
+
+- **Eligible SKUs**: ULT44, UWM10, SX21 can receive global discounts
+- **Coupon Code**: "ELEC5" provides 5% additional discount
+- **Price Overrides**: Set specific target prices for individual products
+
+## Technologies Used
+
+- **Next.js 14+** - React framework with App Router
+- **Tailwind CSS** - Utility-first CSS framework
+- **shadcn/ui** - High-quality React components
+- **Zustand** - Lightweight state management
+- **Lucide React** - Beautiful icons
+- **JavaScript** - No TypeScript (as requested)
+
+## Browser Support
+
+- Modern browsers with ES6+ support
+- Mobile-responsive design
+- Touch-friendly interfaces
+
+## Development
+
+- **Hot Reload**: Instant updates during development
+- **ESLint**: Code quality and consistency
+- **Tailwind CSS**: Utility-first styling
+- **Component-based**: Reusable UI components
+
+## Production Deployment
+
+This starter is ready for production deployment on platforms like:
+- Vercel (recommended)
+- Netlify
+- AWS Amplify
+- Any Node.js hosting platform
+
+## License
+
+This project is open source and available under the MIT License.# forhad
