@@ -148,4 +148,191 @@ This starter is ready for production deployment on platforms like:
 
 ## License
 
-This project is open source and available under the MIT License.# forhad
+This project is open source and available under the MIT License.# Electro Mart - E-commerce Application
+
+A modern, production-ready Next.js e-commerce application built with React, Tailwind CSS, and Zustand for state management.
+
+## 🚀 Live Demo
+
+Visit the live application: [Electro Mart](https://forhad.vercel.app)
+
+## ✨ Features
+
+- **Modern Tech Stack**: Next.js 14+ with App Router, Tailwind CSS, shadcn/ui
+- **Product Catalog**: 6 sample products with multiple images per product
+- **Shopping Cart**: Persistent cart with localStorage, quantity management
+- **Advanced Discounts**: Flexible discount engine with eligible SKUs, coupons, and price overrides
+- **Admin Panel**: Password-protected admin interface for managing products and discounts
+- **Responsive Design**: Mobile-first design that works on all devices
+- **SEO Optimized**: Proper metadata, Open Graph tags, and semantic HTML
+- **BDT Currency**: All prices displayed in Bangladeshi Taka (৳)
+
+## 🛍️ Products
+
+1. **Ulanzi T-44 Tripod** - ৳1,650 (Tripod)
+2. **Ulanzi A100** - ৳3,090 (Accessories)
+3. **ULANZI WM-10 Microphone** - ৳1,550 (Microphone)
+4. **Sx21 Wireless Microphone** - ৳1,399 (Microphone)
+5. **F11-2 Wireless Microphone** - ৳1,349 (Microphone)
+6. **Hoco EQ2 Wireless BT Headset** - ৳1,049 (Headset)
+
+## 🎯 Key Features
+
+### Store Pages
+- **Home Page**: Product grid with search and category filtering
+- **Product Details**: Image gallery, pricing, quantity selector, add to cart
+- **Shopping Cart**: Editable quantities, coupon codes, real-time totals
+- **Checkout**: Customer information form with demo order placement
+
+### Admin Panel
+- **Password Protection**: Secure admin access
+- **Product Management**: JSON-based product catalog editing
+- **Discount Management**: Configure discount rules and coupon codes
+- **Real-time Preview**: See changes immediately
+
+### Discount System
+- **Eligible SKUs**: Mark products for global discounts
+- **Global Discounts**: Percentage or fixed amount discounts
+- **Price Overrides**: Set specific target prices for individual products
+- **Coupon Codes**: Additional discounts (e.g., "ELEC5" for 5% off)
+
+## 🛠️ Tech Stack
+
+- **Framework**: Next.js 14+ with App Router
+- **Styling**: Tailwind CSS
+- **UI Components**: shadcn/ui (Button, Card, Badge, Input, Sheet, Tabs)
+- **State Management**: Zustand with persistence
+- **Icons**: Lucide React
+- **Language**: JavaScript (no TypeScript)
+- **Deployment**: Vercel
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/jh-salman/forhad.git
+   cd forhad
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   Create a `.env.local` file:
+   ```
+   NEXT_PUBLIC_ADMIN_PASS=admin123
+   ```
+
+4. **Run the development server**
+   ```bash
+   npm run dev
+   ```
+
+5. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+## 📁 Project Structure
+
+```
+src/
+├── app/                    # Next.js App Router pages
+│   ├── page.js            # Home page
+│   ├── cart/page.js       # Shopping cart
+│   ├── checkout/page.js   # Checkout process
+│   ├── products/[slug]/   # Product details
+│   └── admin/page.js      # Admin panel
+├── components/            # React components
+│   ├── ui/               # shadcn/ui components
+│   ├── Header.jsx        # Site header
+│   ├── Footer.jsx        # Site footer
+│   ├── ProductCard.jsx   # Product display
+│   ├── ProductGallery.jsx # Image gallery
+│   └── ...
+├── lib/                  # Utility functions
+│   ├── money.js          # Currency formatting
+│   ├── discountEngine.js # Discount calculations
+│   └── ...
+├── store/                # Zustand stores
+│   └── cartStore.js      # Cart state management
+└── data/                 # Sample data
+    ├── products.json     # Product catalog
+    └── discounts.json    # Discount rules
+```
+
+## 🎨 Features in Detail
+
+### Image Gallery
+- Multiple images per product (2-3 images each)
+- Interactive gallery with navigation arrows
+- Thumbnail navigation
+- Responsive design
+
+### Cart Functionality
+- Add/remove items
+- Quantity adjustment
+- Persistent storage
+- Real-time price calculations
+- Coupon code support
+
+### Discount Engine
+- Flexible discount rules
+- Multiple discount types (percentage, fixed, overrides)
+- Coupon code validation
+- Real-time price updates
+
+## 🔧 Admin Access
+
+- **URL**: `/admin`
+- **Password**: `admin123` (configurable via environment variable)
+- **Features**: Edit products and discounts via JSON interface
+
+## 📱 Responsive Design
+
+- Mobile-first approach
+- Touch-friendly interfaces
+- Optimized for all screen sizes
+- Progressive Web App ready
+
+## 🚀 Deployment
+
+The application is deployed on Vercel and can be accessed at:
+**https://forhad.vercel.app**
+
+### Deploy to Vercel
+
+1. **Connect to Vercel**
+   ```bash
+   npx vercel
+   ```
+
+2. **Set environment variables**
+   - `NEXT_PUBLIC_ADMIN_PASS`: Admin password
+
+3. **Deploy**
+   ```bash
+   npx vercel --prod
+   ```
+
+## 📄 License
+
+This project is open source and available under the MIT License.
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📞 Contact
+
+For questions or support, please open an issue on GitHub.
+
+---
+
+**Electro Mart** - Your trusted source for electronics and accessories! 🛒
