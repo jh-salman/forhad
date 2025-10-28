@@ -8,31 +8,59 @@ import { Input } from '@/components/ui/input';
 import { Search, Filter } from 'lucide-react';
 import ProductCard from '@/components/ProductCard';
 import { searchProducts, filterByCategory, getCategories } from '@/lib/search';
-import productsData from '@/data/products.json';
+import { productService } from '@/lib/supabase-admin';
 
 function HomeContent() {
   const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'all');
-  const [filteredProducts, setFilteredProducts] = useState(productsData);
+  const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   
-  const categories = getCategories(productsData);
+  // Load products from Supabase
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        setLoading(true);
+        const data = await productService.getAll();
+        setProducts(data);
+        setFilteredProducts(data);
+      } catch (err) {
+        console.error('Error loading products:', err);
+        setError('Failed to load products');
+        // Fallback to empty array
+        setProducts([]);
+        setFilteredProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadProducts();
+  }, []);
+  
+  const categories = getCategories(products);
   
   useEffect(() => {
-    let products = productsData;
+    let filtered = products;
+    
+    // Only show active products
+    filtered = filtered.filter(product => product.is_active);
     
     // Apply search filter
     if (searchQuery) {
-      products = searchProducts(products, searchQuery);
+      filtered = searchProducts(filtered, searchQuery);
     }
     
     // Apply category filter
     if (selectedCategory !== 'all') {
-      products = filterByCategory(products, selectedCategory);
+      filtered = filterByCategory(filtered, selectedCategory);
     }
     
-    setFilteredProducts(products);
-  }, [searchQuery, selectedCategory]);
+    setFilteredProducts(filtered);
+  }, [searchQuery, selectedCategory, products]);
   
   const handleSearch = (e) => {
     e.preventDefault();
@@ -96,19 +124,48 @@ function HomeContent() {
         
         {/* Results count */}
         <div className="mt-4 text-sm text-gray-600">
-          Showing {filteredProducts.length} of {productsData.length} products
-          {searchQuery && (
-            <span> for &quot;{searchQuery}&quot;</span>
-          )}
-          {selectedCategory !== 'all' && (
-            <span> in {selectedCategory}</span>
+          {loading ? (
+            <span>Loading products...</span>
+          ) : error ? (
+            <span className="text-red-600">{error}</span>
+          ) : (
+            <>
+              Showing {filteredProducts.length} of {products.length} products
+              {searchQuery && (
+                <span> for &quot;{searchQuery}&quot;</span>
+              )}
+              {selectedCategory !== 'all' && (
+                <span> in {selectedCategory}</span>
+              )}
+            </>
           )}
         </div>
       </section>
       
       {/* Products Grid */}
       <section>
-        {filteredProducts.length === 0 ? (
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="animate-pulse">
+                <div className="aspect-square bg-gray-200 rounded-lg mb-4"></div>
+                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+              </div>
+            ))}
+          </div>
+        ) : error ? (
+          <div className="text-center py-12">
+            <h3 className="text-xl font-semibold text-red-600 mb-2">Error Loading Products</h3>
+            <p className="text-gray-600 mb-4">{error}</p>
+            <Button 
+              onClick={() => window.location.reload()}
+              variant="outline"
+            >
+              Retry
+            </Button>
+          </div>
+        ) : filteredProducts.length === 0 ? (
           <div className="text-center py-12">
             <h3 className="text-xl font-semibold text-gray-900 mb-2">No products found</h3>
             <p className="text-gray-600 mb-4">

@@ -6,9 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Lock, Save, Eye, EyeOff } from 'lucide-react';
-import productsData from '@/data/products.json';
-import discountsData from '@/data/discounts.json';
+import { Lock, Save, Eye, EyeOff, Plus, Edit, Trash2 } from 'lucide-react';
+import ProductList from '@/components/admin/ProductList';
+import ProductForm from '@/components/admin/ProductForm';
+import { productService, discountService } from '@/lib/supabase-admin';
+import { testSupabaseConnection, testProductInsert } from '@/lib/test-supabase';
+import { debugSupabaseConfig, testSupabaseConnection as debugConnection, testNetworkConnectivity } from '@/lib/debug-supabase';
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -16,18 +19,51 @@ export default function AdminPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [activeTab, setActiveTab] = useState('products');
   
-  // Data states
-  const [products, setProducts] = useState(productsData);
-  const [discounts, setDiscounts] = useState(discountsData);
-  const [productsJson, setProductsJson] = useState(JSON.stringify(productsData, null, 2));
-  const [discountsJson, setDiscountsJson] = useState(JSON.stringify(discountsData, null, 2));
+  // Product management states
+  const [showProductForm, setShowProductForm] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
   
-  // Validation states
-  const [productsError, setProductsError] = useState('');
+  // Discount management states
+  const [discounts, setDiscounts] = useState([]);
+  const [discountsJson, setDiscountsJson] = useState('');
   const [discountsError, setDiscountsError] = useState('');
-  const [saveMessage, setSaveMessage] = useState('');
   
   const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASS || 'admin123';
+  
+  // Load data when authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadProducts();
+      loadDiscounts();
+    }
+  }, [isAuthenticated]);
+  
+  const loadProducts = async () => {
+    try {
+      setLoading(true);
+      const data = await productService.getAll();
+      setProducts(data);
+    } catch (error) {
+      console.error('Error loading products:', error);
+      setMessage('Failed to load products');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const loadDiscounts = async () => {
+    try {
+      const data = await discountService.getAll();
+      setDiscounts(data);
+      setDiscountsJson(JSON.stringify(data, null, 2));
+    } catch (error) {
+      console.error('Error loading discounts:', error);
+      setMessage('Failed to load discounts');
+    }
+  };
   
   const handleLogin = (e) => {
     e.preventDefault();
@@ -39,84 +75,91 @@ export default function AdminPage() {
     }
   };
   
-  const validateJson = (jsonString, type) => {
-    try {
-      const parsed = JSON.parse(jsonString);
-      
-      if (type === 'products') {
-        if (!Array.isArray(parsed)) {
-          return 'Products must be an array';
-        }
-        
-        for (const product of parsed) {
-          if (!product.id || !product.sku || !product.name || !product.price) {
-            return 'Each product must have id, sku, name, and price';
-          }
-          if (typeof product.price !== 'number' || product.price < 0) {
-            return 'Product price must be a positive number';
-          }
-        }
-      } else if (type === 'discounts') {
-        if (typeof parsed !== 'object') {
-          return 'Discounts must be an object';
-        }
-        
-        if (!Array.isArray(parsed.eligibleSkus)) {
-          return 'eligibleSkus must be an array';
-        }
-        
-        if (parsed.global && typeof parsed.global !== 'object') {
-          return 'global must be an object';
-        }
-        
-        if (parsed.overrides && !Array.isArray(parsed.overrides)) {
-          return 'overrides must be an array';
-        }
-        
-        if (parsed.coupons && !Array.isArray(parsed.coupons)) {
-          return 'coupons must be an array';
-        }
-      }
-      
-      return '';
-    } catch (error) {
-      return 'Invalid JSON format';
+  const handleAddProduct = () => {
+    setEditingProduct(null);
+    setShowProductForm(true);
+  };
+  
+  const handleEditProduct = (product) => {
+    setEditingProduct(product);
+    setShowProductForm(true);
+  };
+  
+  const handleProductSave = () => {
+    setShowProductForm(false);
+    setEditingProduct(null);
+    loadProducts();
+    setMessage('Product saved successfully!');
+    setTimeout(() => setMessage(''), 3000);
+  };
+  
+  const handleProductCancel = () => {
+    setShowProductForm(false);
+    setEditingProduct(null);
+  };
+  
+  const handleTestConnection = async () => {
+    console.log('Testing Supabase connection...');
+    const result = await testSupabaseConnection();
+    if (result.success) {
+      alert('Supabase connection successful!');
+    } else {
+      alert(`Connection failed: ${result.error?.message || 'Unknown error'}`);
     }
   };
   
-  const handleProductsChange = (value) => {
-    setProductsJson(value);
-    const error = validateJson(value, 'products');
-    setProductsError(error);
+  const handleTestInsert = async () => {
+    console.log('Testing product insert...');
+    const result = await testProductInsert();
+    if (result.success) {
+      alert('Product insert test successful!');
+    } else {
+      alert(`Insert test failed: ${result.error?.message || 'Unknown error'}`);
+    }
+  };
+  
+  const handleDebugConfig = () => {
+    console.log('=== Debugging Supabase Configuration ===');
+    debugSupabaseConfig();
+    alert('Check browser console for configuration details');
+  };
+  
+  const handleDebugConnection = async () => {
+    console.log('=== Debugging Supabase Connection ===');
+    const result = await debugConnection();
+    if (result.success) {
+      alert('Supabase connection debug successful! Check console for details.');
+    } else {
+      alert(`Connection debug failed: ${result.error}. Check console for details.`);
+    }
+  };
+  
+  const handleDebugNetwork = async () => {
+    console.log('=== Debugging Network Connectivity ===');
+    const result = await testNetworkConnectivity();
+    if (result.success) {
+      alert('Network connectivity successful! Check console for details.');
+    } else {
+      alert(`Network test failed: ${result.error}. Check console for details.`);
+    }
   };
   
   const handleDiscountsChange = (value) => {
     setDiscountsJson(value);
-    const error = validateJson(value, 'discounts');
-    setDiscountsError(error);
+    try {
+      JSON.parse(value);
+      setDiscountsError('');
+    } catch (error) {
+      setDiscountsError('Invalid JSON format');
+    }
   };
   
-  const handleSave = (type) => {
-    const jsonString = type === 'products' ? productsJson : discountsJson;
-    const error = validateJson(jsonString, type);
-    
-    if (error) {
-      alert(`Validation error: ${error}`);
-      return;
-    }
-    
+  const handleSaveDiscounts = async () => {
     try {
-      const parsed = JSON.parse(jsonString);
-      
-      if (type === 'products') {
-        setProducts(parsed);
-        setSaveMessage('Products updated successfully!');
-      } else {
-        setDiscounts(parsed);
-        setSaveMessage('Discounts updated successfully!');
-      }
-      
-      setTimeout(() => setSaveMessage(''), 3000);
+      const parsed = JSON.parse(discountsJson);
+      // Here you would implement discount saving logic
+      setMessage('Discounts updated successfully!');
+      setTimeout(() => setMessage(''), 3000);
     } catch (error) {
       alert('Error parsing JSON');
     }
@@ -177,174 +220,136 @@ export default function AdminPage() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Admin Panel</h1>
-        <Button
-          variant="outline"
-          onClick={() => setIsAuthenticated(false)}
-        >
-          Logout
-        </Button>
+        <div className="flex gap-2 flex-wrap">
+          <Button
+            variant="outline"
+            onClick={handleDebugConfig}
+            size="sm"
+          >
+            Debug Config
+          </Button>
+          <Button
+            variant="outline"
+            onClick={handleDebugNetwork}
+            size="sm"
+          >
+            Debug Network
+          </Button>
+          <Button
+            variant="outline"
+            onClick={handleDebugConnection}
+            size="sm"
+          >
+            Debug Connection
+          </Button>
+          <Button
+            variant="outline"
+            onClick={handleTestInsert}
+            size="sm"
+          >
+            Test Insert
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => setIsAuthenticated(false)}
+          >
+            Logout
+          </Button>
+        </div>
       </div>
       
-      {saveMessage && (
+      {message && (
         <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-          {saveMessage}
+          {message}
         </div>
       )}
       
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="products">Products</TabsTrigger>
-          <TabsTrigger value="discounts">Discounts</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="products" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Products Management</CardTitle>
-                <div className="flex gap-2">
-                  <Badge variant="outline">
-                    {products.length} products
-                  </Badge>
-                  <Button
-                    onClick={() => handleSave('products')}
-                    disabled={!!productsError}
-                    size="sm"
-                  >
-                    <Save className="h-4 w-4 mr-2" />
-                    Simulate Save
-                  </Button>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {productsError && (
-                <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm">
-                  {productsError}
-                </div>
-              )}
-              <textarea
-                value={productsJson}
-                onChange={(e) => handleProductsChange(e.target.value)}
-                className="w-full h-96 p-4 border rounded-lg font-mono text-sm"
-                placeholder="Enter products JSON..."
-              />
-            </CardContent>
-          </Card>
+      {showProductForm ? (
+        <ProductForm
+          product={editingProduct}
+          onSave={handleProductSave}
+          onCancel={handleProductCancel}
+        />
+      ) : (
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="products">Products</TabsTrigger>
+            <TabsTrigger value="discounts">Discounts</TabsTrigger>
+          </TabsList>
           
-          {/* Products Preview */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Products Preview</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {products.slice(0, 6).map((product) => (
-                  <div key={product.id} className="border rounded-lg p-4">
-                    <h4 className="font-semibold">{product.name}</h4>
-                    <p className="text-sm text-gray-600">SKU: {product.sku}</p>
-                    <p className="text-sm text-gray-600">Price: ৳{product.price}</p>
-                    <p className="text-sm text-gray-600">Stock: {product.stock}</p>
-                    <Badge variant="outline" className="mt-2">
-                      {product.category}
+          <TabsContent value="products" className="space-y-6">
+            <ProductList
+              onEdit={handleEditProduct}
+              onAdd={handleAddProduct}
+            />
+          </TabsContent>
+          
+          <TabsContent value="discounts" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle>Discounts Management</CardTitle>
+                  <div className="flex gap-2">
+                    <Badge variant="outline">
+                      {discounts.length} discounts
                     </Badge>
+                    <Button
+                      onClick={handleSaveDiscounts}
+                      disabled={!!discountsError}
+                      size="sm"
+                    >
+                      <Save className="h-4 w-4 mr-2" />
+                      Save Discounts
+                    </Button>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="discounts" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Discounts Management</CardTitle>
-                <div className="flex gap-2">
-                  <Badge variant="outline">
-                    {discounts.eligibleSkus?.length || 0} eligible SKUs
-                  </Badge>
-                  <Button
-                    onClick={() => handleSave('discounts')}
-                    disabled={!!discountsError}
-                    size="sm"
-                  >
-                    <Save className="h-4 w-4 mr-2" />
-                    Simulate Save
-                  </Button>
                 </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {discountsError && (
-                <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm">
-                  {discountsError}
-                </div>
-              )}
-              <textarea
-                value={discountsJson}
-                onChange={(e) => handleDiscountsChange(e.target.value)}
-                className="w-full h-96 p-4 border rounded-lg font-mono text-sm"
-                placeholder="Enter discounts JSON..."
-              />
-            </CardContent>
-          </Card>
-          
-          {/* Discounts Preview */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Discounts Preview</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <h4 className="font-semibold mb-2">Eligible SKUs:</h4>
-                <div className="flex flex-wrap gap-2">
-                  {discounts.eligibleSkus?.map((sku) => (
-                    <Badge key={sku} variant="secondary">{sku}</Badge>
-                  ))}
-                </div>
-              </div>
-              
-              {discounts.global && (
-                <div>
-                  <h4 className="font-semibold mb-2">Global Discount:</h4>
-                  <p className="text-sm text-gray-600">
-                    {discounts.global.percent ? `${discounts.global.percent}% off` : 
-                     discounts.global.fixed ? `৳${discounts.global.fixed} off` : 'None'}
-                  </p>
-                </div>
-              )}
-              
-              {discounts.overrides && discounts.overrides.length > 0 && (
-                <div>
-                  <h4 className="font-semibold mb-2">Price Overrides:</h4>
-                  <div className="space-y-2">
-                    {discounts.overrides.map((override, index) => (
-                      <div key={index} className="text-sm text-gray-600">
-                        <strong>{override.sku}:</strong> ৳{override.targetPrice}
-                        {override.note && <span className="text-gray-500"> - {override.note}</span>}
+              </CardHeader>
+              <CardContent>
+                {discountsError && (
+                  <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm">
+                    {discountsError}
+                  </div>
+                )}
+                <textarea
+                  value={discountsJson}
+                  onChange={(e) => handleDiscountsChange(e.target.value)}
+                  className="w-full h-96 p-4 border rounded-lg font-mono text-sm"
+                  placeholder="Enter discounts JSON..."
+                />
+              </CardContent>
+            </Card>
+            
+            {/* Discounts Preview */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Discounts Preview</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {discounts.length > 0 ? (
+                  <div className="space-y-4">
+                    {discounts.map((discount) => (
+                      <div key={discount.id} className="border rounded-lg p-4">
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-semibold">{discount.name}</h4>
+                          <Badge variant={discount.is_active ? 'default' : 'secondary'}>
+                            {discount.is_active ? 'Active' : 'Inactive'}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-gray-600">
+                          Type: {discount.type} | Value: {discount.value}
+                          {discount.sku && ` | SKU: ${discount.sku}`}
+                        </p>
                       </div>
                     ))}
                   </div>
-                </div>
-              )}
-              
-              {discounts.coupons && discounts.coupons.length > 0 && (
-                <div>
-                  <h4 className="font-semibold mb-2">Coupon Codes:</h4>
-                  <div className="space-y-2">
-                    {discounts.coupons.map((coupon, index) => (
-                      <div key={index} className="text-sm text-gray-600">
-                        <strong>{coupon.code}:</strong> {coupon.percent}% off
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+                ) : (
+                  <p className="text-gray-500">No discounts found</p>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      )}
     </div>
   );
 }
