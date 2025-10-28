@@ -10,8 +10,6 @@ import { Lock, Save, Eye, EyeOff, Plus, Edit, Trash2 } from 'lucide-react';
 import ProductList from '@/components/admin/ProductList';
 import ProductForm from '@/components/admin/ProductForm';
 import { productService, discountService } from '@/lib/supabase-admin';
-import { testSupabaseConnection, testProductInsert } from '@/lib/test-supabase';
-import { debugSupabaseConfig, testSupabaseConnection as debugConnection, testNetworkConnectivity } from '@/lib/debug-supabase';
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -98,51 +96,6 @@ export default function AdminPage() {
     setEditingProduct(null);
   };
   
-  const handleTestConnection = async () => {
-    console.log('Testing Supabase connection...');
-    const result = await testSupabaseConnection();
-    if (result.success) {
-      alert('Supabase connection successful!');
-    } else {
-      alert(`Connection failed: ${result.error?.message || 'Unknown error'}`);
-    }
-  };
-  
-  const handleTestInsert = async () => {
-    console.log('Testing product insert...');
-    const result = await testProductInsert();
-    if (result.success) {
-      alert('Product insert test successful!');
-    } else {
-      alert(`Insert test failed: ${result.error?.message || 'Unknown error'}`);
-    }
-  };
-  
-  const handleDebugConfig = () => {
-    console.log('=== Debugging Supabase Configuration ===');
-    debugSupabaseConfig();
-    alert('Check browser console for configuration details');
-  };
-  
-  const handleDebugConnection = async () => {
-    console.log('=== Debugging Supabase Connection ===');
-    const result = await debugConnection();
-    if (result.success) {
-      alert('Supabase connection debug successful! Check console for details.');
-    } else {
-      alert(`Connection debug failed: ${result.error}. Check console for details.`);
-    }
-  };
-  
-  const handleDebugNetwork = async () => {
-    console.log('=== Debugging Network Connectivity ===');
-    const result = await testNetworkConnectivity();
-    if (result.success) {
-      alert('Network connectivity successful! Check console for details.');
-    } else {
-      alert(`Network test failed: ${result.error}. Check console for details.`);
-    }
-  };
   
   const handleDiscountsChange = (value) => {
     setDiscountsJson(value);
@@ -220,42 +173,12 @@ export default function AdminPage() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Admin Panel</h1>
-        <div className="flex gap-2 flex-wrap">
-          <Button
-            variant="outline"
-            onClick={handleDebugConfig}
-            size="sm"
-          >
-            Debug Config
-          </Button>
-          <Button
-            variant="outline"
-            onClick={handleDebugNetwork}
-            size="sm"
-          >
-            Debug Network
-          </Button>
-          <Button
-            variant="outline"
-            onClick={handleDebugConnection}
-            size="sm"
-          >
-            Debug Connection
-          </Button>
-          <Button
-            variant="outline"
-            onClick={handleTestInsert}
-            size="sm"
-          >
-            Test Insert
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => setIsAuthenticated(false)}
-          >
-            Logout
-          </Button>
-        </div>
+        <Button
+          variant="outline"
+          onClick={() => setIsAuthenticated(false)}
+        >
+          Logout
+        </Button>
       </div>
       
       {message && (

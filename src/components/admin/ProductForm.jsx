@@ -99,21 +99,15 @@ export default function ProductForm({ product = null, onSave, onCancel }) {
         updated_at: new Date().toISOString()
       };
 
-      console.log('Saving product data:', productData);
-
       if (product) {
         // Update existing product
-        console.log('Updating product:', product.id);
         await productService.update(product.id, productData);
       } else {
         // Create new product
         productData.id = `p${Date.now()}`;
         productData.created_at = new Date().toISOString();
-        console.log('Creating new product:', productData.id);
         await productService.create(productData);
       }
-
-      console.log('Product saved successfully');
       onSave();
     } catch (error) {
       console.error('Error saving product:', error);

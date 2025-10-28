@@ -39,20 +39,13 @@ export const productService = {
 
   // Create new product
   async create(product) {
-    console.log('Creating product with data:', product);
-    
     const { data, error } = await supabase
       .from('products')
       .insert([product])
       .select()
       .single()
     
-    if (error) {
-      console.error('Supabase create error:', error);
-      throw error;
-    }
-    
-    console.log('Product created successfully:', data);
+    if (error) throw error
     return data
   },
 
@@ -85,22 +78,16 @@ export const productService = {
     const fileName = `${productId}-${Date.now()}.${fileExt}`
     const filePath = `products/${fileName}`
 
-    console.log('Uploading image to path:', filePath)
-
     const { error: uploadError } = await supabase.storage
       .from('product-images')
       .upload(filePath, file)
 
-    if (uploadError) {
-      console.error('Upload error:', uploadError)
-      throw uploadError
-    }
+    if (uploadError) throw uploadError
 
     const { data } = supabase.storage
       .from('product-images')
       .getPublicUrl(filePath)
 
-    console.log('Image uploaded successfully:', data.publicUrl)
     return data.publicUrl
   }
 }
